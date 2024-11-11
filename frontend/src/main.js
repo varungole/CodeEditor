@@ -9,7 +9,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/', component: Main},
-        { path: '/editor/:sessionId', component: Editor},
+        { path: '/:sessionId', component: Editor},
     ]
 })
 

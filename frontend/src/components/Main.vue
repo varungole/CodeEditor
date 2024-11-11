@@ -3,7 +3,7 @@
 function generateLink() {
     
     const uniqueId = Math.random().toString(36).substr(2,9);
-    const editorUrl = `${window.location.origin}/editor/${uniqueId}`;
+    const editorUrl = `${window.location.origin}/${uniqueId}`;
     window.open(editorUrl, '_blank');
 }
 
