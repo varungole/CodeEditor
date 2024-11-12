@@ -7,10 +7,9 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class WebSocketController {
 
-    @MessageMapping("/sendCode")
-    @SendTo("/topic/receiveCode")
-    public String sendCode(String code) {
+    @MessageMapping("/edit")
+    @SendTo("/topic/editor")
+    public String broadcastEdit(String code) {
         return code;
     }
-
 }

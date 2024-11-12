@@ -3,39 +3,36 @@
     import SockJS from 'sockjs-client';
     import Stomp from 'stompjs';
 
-    //allows us to create a reactive reference to const
-    const codeContent = ref('');
+    const codeContext = ref('');
     let stompClient;
 
     onMounted(() => {
+      const socket = new SockJS('http://localhost:8082/websocket');
+      stompClient = Stomp.over(socket);
 
-    //connect to spring boot
-        const socket = new SockJS('http://localhost:8081/ws');
-        stompClient = Stomp.over(socket);
-        
-        stompClient.connect({}, () => {
-            stompClient.subscribe('/topic/receiveCode', (message) => {
-                codeContent.value = message.body
-            });
+      stompClient.connect({}, () => {
+        //whenever a message is send to the below, all subscribes will get the message
+        stompClient.subscribe('/topic/editor', (message) => {
+          codeContext.value = message.body;
         });
-
-    watch(codeContent, (newCode) => {
-        sendCodeToBackend(newCode);
-    })
-
+      });
     });
 
-    //function to send code to backend
-    const sendCodeToBackend = (code) => {
-        if (stompClient && stompClient.connected) {
-         stompClient.send('/app/sendCode', {}, code);
-        }
+    const sendUpdate = () => {
+      if(stompClient && stompClient.connected) {
+        stompClient.send('/app/edit', {}, codeContext.value);
+      }
+    };
+
+    const handleInput = (event) => {
+      codeContext.value = event.target.value;
+      sendUpdate();
     }
 
     </script>
 
     <template>
-    <textarea class="txtarea" id="Text" value="" v-model="codeContext" placeholder="Enter some code..."> </textarea>
+    <textarea class="txtarea" id="text" v-model="codeContext" @input="handleInput" placeholder="Enter some code..."> </textarea>
     </template>
 
     <style scoped>
